@@ -6,7 +6,7 @@
 /*   By: yecsong <yecsong@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/15 15:59:06 by yecsong           #+#    #+#             */
-/*   Updated: 2022/04/18 18:32:45 by yecsong          ###   ########.fr       */
+/*   Updated: 2022/04/19 21:09:26 by yecsong          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,46 +15,63 @@
 
 int		ft_strchr(char	*arr, char c, size_t len);
 int		ft_strlen(const char *s);
-char	*split(char *storage, char *buff);
+char	*split(char *buff, int order);
 char	*ft_strjoin(char const *s1, char const *s2);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 char	*get_next_line(int fd)
 {
-	static char	*storage;
+	static char	*store;
 	char		*buff;
 	char		*temp;
 
-	buff = (char *)malloc(sizeof(char) * 30);
-	if (!buff)
-		return (NULL);
-	while (ft_strchr(storage, '\n', 30));
-	{
-	}
+	buff = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1));
+	buff[BUFF_SIZE] = '\0';
+	store = (char *)malloc(sizeof(char) * 1024);
+
 	while (read(fd, buff, BUFF_SIZE) > 0)
 	{
-		buff[ft_strlen(buff)] = '\0';
 		if (ft_strchr(buff, '\n', BUFF_SIZE + 1))
 		{
-			return (split(storage, buff));
+			temp = ft_strjoin(store, split(buff, 0));
+			store = split(buff, 1);
+			free(buff);
+			return (temp);
 		}
 		else
 		{
-			temp = ft_strjoin(storage, buff);
-			if (storage)
-				free(storage);
-			storage = temp;
+			store = ft_strjoin(store, buff);
+			free(buff);
 		}
 	}
 	return (NULL);
 }
 
+char	*split(char *buff, int order)
+{
+	char	*arr;
+	int		location;
+	if (order == 0)
+	{
+		location = ft_strchr(buff, '\n', BUFF_SIZE + 1);
+		arr = (char *)malloc(sizeof(char) * location + 1);
+		ft_strlcpy(arr, buff, location + 1);
+		return (arr);
+	}
+	else
+	{
+		location = ft_strchr(buff, '\n', BUFF_SIZE + 1);
+		arr = (char *)malloc(sizeof(char) * BUFF_SIZE - location);
+		ft_strlcpy(arr, buff + location, BUFF_SIZE - location);
+		return (arr);
+	}
+}
 int	ft_strchr(char	*arr, char c, size_t len)
 {
 	size_t	i;
 
 	i = 0;
-	while (i < len)
+	while (i < len && arr[i])
 	{
 		if (arr[i] == c)
 			return (i + 1);
@@ -73,20 +90,6 @@ int	ft_strlen(const char *s)
 		i++;
 	}
 	return (i);
-}
-
-char *split(char *storage, char *buff)
-{
-	char	*first;
-	size_t	pos_new;
-
-	pos_new = ft_strchr(buff, '\n', BUFF_SIZE);
-	first = (char *)malloc(sizeof(char) * pos_new + 1);
-	if (!first)
-		return (NULL);
-	ft_strlcpy(first, buff, pos_new + 1);
-	ft_strlcpy(storage, buff + pos_new, BUFF_SIZE - pos_new + 1);
-	return (first);
 }
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
