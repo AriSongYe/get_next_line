@@ -1,39 +1,96 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yecsong <yecsong@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/03 12:15:59 by yecsong           #+#    #+#             */
-/*   Updated: 2022/05/13 15:23:50 by yecsong          ###   ########.fr       */
+/*   Updated: 2022/05/13 15:23:43 by yecsong          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*read_line(int fd, char *store, int *end);
 char	*ft_strjoin(char *s1, char *s2);
-int		ft_strchr(const char *s, int *end);
+void	free_node(int fd, int is_free, t_list **list);
+t_list	*get_node(int fd, t_list **list);
 
 char	*get_next_line(int fd)
 {
-	static char	*store;
-	char		*line;
-	char		*temp;
-	int			end;
+	static t_list	*list;
+	t_list			*node;
+	char			*line;
+	char			*temp;
+	int				end;
 
 	end = 0;
-	temp = read_line(fd, store, &end);
+	node = get_node(fd, &list);
+	if (!node)
+		return (NULL);
+	temp = read_line(fd, node->store, &end);
 	if (!temp || end == 0)
 	{
 		free(temp);
+		free_node(fd, 1, &list);
 		return (NULL);
 	}
 	line = ft_strdup(temp, end);
-	store = ft_strdup(temp + end, ft_strlen (temp + end));
+	node->store = ft_strdup(temp + end, ft_strlen (temp + end));
 	free(temp);
+	free_node(1, line == NULL, &list);
 	return (line);
+}
+
+t_list	*get_node(int fd, t_list **list)
+{
+	t_list	*node;
+
+	node = *list;
+	while (node)
+	{
+		if (node->fd == fd)
+			break ;
+		node = node->next;
+	}
+	if (!node)
+	{
+		node = malloc(sizeof(t_list));
+		if (!node)
+			return (NULL);
+		node->fd = fd;
+		node->store = NULL;
+		node->next = *list;
+		*list = node;
+	}
+	return (node);
+}
+
+void	free_node(int fd, int is_free, t_list **list)
+{
+	t_list	*node;
+	t_list	*last;
+
+	if (!is_free)
+		return ;
+	if ((*list)->fd == fd)
+	{
+		last = (*list)->next;
+		free(*list);
+		*list = last;
+		return ;
+	}
+	node = *list;
+	while (node)
+	{
+		if (node->fd == fd)
+			break ;
+		last = node;
+		node = node->next;
+	}
+	last->next = node->next;
+	free(node);
 }
 
 char	*read_line(int fd, char *store, int *end)
@@ -78,21 +135,4 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_strlcpy(ptr + s1_len, s2, s2_len + 1);
 	free(s1);
 	return (ptr);
-}
-
-int	ft_strchr(const char *s, int *end)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-	{
-		if (s[i] == '\n')
-		{
-			*end = i + 1;
-			return (1);
-		}
-		i++;
-	}
-	return (0);
 }
