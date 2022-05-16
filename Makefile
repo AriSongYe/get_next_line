@@ -6,11 +6,11 @@
 #    By: yecsong <yecsong@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/05/13 15:31:05 by yecsong           #+#    #+#              #
-#    Updated: 2022/05/13 15:39:20 by yecsong          ###   ########.fr        #
+#    Updated: 2022/05/13 15:59:14 by yecsong          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME := get_next_line.o
+NAME := ./a.out
 
 SRCS := get_next_line.c\
 		get_next_line_utils.c\
@@ -20,20 +20,18 @@ SRCS_BONUS := get_next_line_bonus.c\
 		get_next_line_utils_bonus.c\
 		bonus_main.c
 
-OBJS = $(SRCS:%.c=%.o)
+m : $(SRCS)
+	$(CC) $(CFLAGS) BUFFER_SIZE=$(BUFF) $?
 
-OBJS_BONUS = $(SRCS_BONUS:%.c=%.o)
+b : $(SRCS_BONUS)
+	$(CC) $(CFLAGS) BUFFER_SIZE=$(BUFF) $?
 
-m : (OBJS)
-	$(CC) $(CFLAGS) $@ $?
-
-b : (OBJS_BONUS)
-	$(CC) $(CFLAGS) $@ $?
-
-CFLAGS := -Werror -Wextra -Wall
+CFLAGS := -Werror -Wextra -Wall -D
 
 clean :
 	rm -f *.o
 
 fclean : clean 
 	rm -f $(NAME)
+
+PONNY: clean fclean b m

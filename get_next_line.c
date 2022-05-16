@@ -6,7 +6,7 @@
 /*   By: yecsong <yecsong@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/03 12:15:59 by yecsong           #+#    #+#             */
-/*   Updated: 2022/05/13 15:23:50 by yecsong          ###   ########.fr       */
+/*   Updated: 2022/05/13 16:46:34 by yecsong          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ char	*get_next_line(int fd)
 	if (!temp || end == 0)
 	{
 		free(temp);
+		store = NULL;
 		return (NULL);
 	}
 	line = ft_strdup(temp, end);
