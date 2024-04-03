@@ -9,7 +9,7 @@
 - 리턴한 line 값의 free는 main에서 해야한다!( or 프로그램 종료)
 
 ## 필요한 개념
-File descriptor, static Variable, Linked List
+[open func](https://www.notion.so/open-func-04bd0983513e4d088a05847f2e05d8f1?pvs=21), [read func](https://www.notion.so/read-func-02d8942ed9a1489eb5d91a05852c9929?pvs=4). [static variable](https://www.notion.so/static-variable-b1160b37f7c3477a815e9a25e3650473?pvs=4)
 
 ## Prototype
 
